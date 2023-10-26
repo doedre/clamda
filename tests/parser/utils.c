@@ -146,9 +146,9 @@ line_type_gets_extracted_correctly_test(void** state)
 			fail_msg(
 				"On file line %d -- %d (%s) != %d (%s)",
 				parser.pos_line, expected,
-				clamda_parser_get_line_type_name(expected),
+				clamda_parser_line_type_name(expected),
 				result,
-				clamda_parser_get_line_type_name(result)
+				clamda_parser_line_type_name(result)
 			);
 		}
 	}

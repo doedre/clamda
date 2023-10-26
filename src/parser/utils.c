@@ -78,7 +78,7 @@ clamda_parser_get_line_type(const struct clamda_parser* const p)
 }
 
 const char*
-clamda_parser_get_line_type_name(enum clamda_line_type type)
+clamda_parser_line_type_name(enum clamda_line_type type)
 {
 	static const char* const
 	clamda_line_type_names[CLAMDA_LINE_EXTRA + 1] = {

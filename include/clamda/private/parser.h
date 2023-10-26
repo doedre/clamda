@@ -66,8 +66,6 @@ enum clamda_line_type
 clamda_parser_get_line_type(const struct clamda_parser* const);
 
 const char*
-clamda_parser_get_line_type_name(enum clamda_line_type type);
-
-int clamda_parser_readline(struct clamda_parser* const p);
+clamda_parser_line_type_name(enum clamda_line_type type);
 
 #endif
