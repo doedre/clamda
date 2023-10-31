@@ -35,19 +35,22 @@ clamda_colpart_name(enum clamda_colpart_id id)
 	return names[id - 1];
 }
 
-struct clamda_colrates {
-	uint32_t transition;
-	uint32_t up;
-	uint32_t low;
-	double* rates;
+// Possible LAMDA values:
+// * integer
+// * float
+// * string
+// * arrays of those
+enum clamda_value_type {
+	CLAMDA_VALUE_TYPE_INTEGER,
+	CLAMDA_VALUE_TYPE_FLOAT,
+	CLAMDA_VALUE_TYPE_STRING,
+	CLAMDA_VALUE_TYPE_ARRAY
 };
 
-typedef struct {
-	enum clamda_colpart_id name;
-	char* information;
-	double* temperatures;
-
-} clamda_colpart_data;
+struct clamda_value {
+	int type;
+	char* value;
+};
 
 #ifdef __cplusplus
 }

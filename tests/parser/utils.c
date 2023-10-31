@@ -154,10 +154,26 @@ line_type_gets_extracted_correctly_test(void** state)
 	}
 }
 
+/*
+void
+molecule_name_parse_test(void** state)
+{
+	char name[BUFSIZ];
+	char descr[BUFSIZ];
+	struct clamda_parser p = {
+		.line = "MOLECULE",
+	};
+
+	clamda_parse_name(&p, name, BUFSIZ, descr, BUFSIZ);
+	assert_string_equal("MOLECULE", name);
+}
+*/
+
 int main(void)
 {
 	const struct CMUnitTest parser_util_test[] = {
 		cmocka_unit_test(line_type_gets_extracted_correctly_test),
+//		cmocka_unit_test(molecule_name_parse_test),
 	};
 
 	int res;

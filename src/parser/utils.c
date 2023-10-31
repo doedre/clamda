@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #include <clamda/clamda.h>
 #include <clamda/private/parser.h>
 
@@ -104,3 +106,29 @@ clamda_parser_line_type_name(enum clamda_line_type type)
 	}
 }
 
+/*
+int
+clamda_parse_name(struct clamda_parser* p,
+		char* name_buf, size_t name_buf_size,
+		char* descr_buf, size_t descr_buf_size)
+{
+	bool comment = false;
+	size_t inb = 0, idb = 0;
+	for (int i = 0, c = p->line[i]; c != '\n'; ++i, c = p->line[i]) {
+		if (c == '!') {
+			comment = true;
+			continue;
+		}
+
+		if (!comment && inb < name_buf_size) {
+			name_buf[inb] = (char)c;
+			++inb;
+		} else if (comment && idb < descr_buf_size) {
+			descr_buf[idb] = (char)c;
+			++idb;
+		} else {
+	}
+
+	return 0;
+}
+*/
