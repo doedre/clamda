@@ -40,12 +40,6 @@ enum clamda_line_type {
 	CLAMDA_LINE_EXTRA
 };
 
-struct clamda_parser_error {
-	int errc;
-	uint32_t nline, ncol;
-	char* descr;
-};
-
 struct clamda_parser {
 	FILE* input;
 	uint32_t pos_line, pos_col;

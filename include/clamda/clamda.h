@@ -52,6 +52,16 @@ struct clamda_value {
 	char* value;
 };
 
+enum clamda_error_code {
+	CLAMDA_OK = 0,
+};
+
+struct clamda_parser_error {
+	enum clamda_error_code error_code;
+	uint32_t nline, ncol;
+	char* descr;
+};
+
 #ifdef __cplusplus
 }
 #endif

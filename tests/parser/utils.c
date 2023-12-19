@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -154,26 +155,92 @@ line_type_gets_extracted_correctly_test(void** state)
 	}
 }
 
-/*
 void
 molecule_name_parse_test(void** state)
 {
+	(void)state;
+
 	char name[BUFSIZ];
 	char descr[BUFSIZ];
 	struct clamda_parser p = {
-		.line = "MOLECULE",
+		.line = "MOLECULE ! some additional information\n",
 	};
 
-	clamda_parse_name(&p, name, BUFSIZ, descr, BUFSIZ);
+	const int err = clamda_parse_name(
+			&p,
+			name, BUFSIZ,
+			descr, BUFSIZ
+	);
+
+	assert_int_equal(err, 0);
 	assert_string_equal("MOLECULE", name);
+	assert_string_equal("some additional information", descr);
 }
-*/
+
+void
+empty_molecule_name_parse_test(void** state)
+{
+	(void)state;
+
+	char name[BUFSIZ];
+	char descr[BUFSIZ];
+
+	struct clamda_parser p = {
+		.line = "",
+	};
+
+	const int err = clamda_parse_name(
+			&p,
+			name, BUFSIZ,
+			descr, BUFSIZ
+	);
+
+	assert_int_equal(err, 0);
+	assert_string_equal("", name);
+	assert_string_equal("", descr);
+}
+
+void
+molecule_name_parse_with_small_buffers_test(void** state)
+{
+	(void)state;
+
+	const size_t namesz = 3;
+	const size_t descrsz = 3;
+	char name[namesz];
+	char descr[descrsz];
+
+	struct clamda_parser p = {
+		.line = "MOLECULE"
+	};
+
+	int err = clamda_parse_name(
+			&p,
+			name, namesz,
+			descr, descrsz 
+	);
+
+	assert_int_equal(err, ENOBUFS);
+	assert_int_equal(p.pos_col, namesz);
+
+	strncpy(p.line, "M ! molecule", CLAMDA_BUFSIZ);
+	err = clamda_parse_name(
+			&p,
+			name, namesz,
+			descr, descrsz
+	);
+
+	assert_int_equal(err, ENOBUFS);
+	assert_int_equal(p.pos_col, 6);
+}
 
 int main(void)
 {
 	const struct CMUnitTest parser_util_test[] = {
 		cmocka_unit_test(line_type_gets_extracted_correctly_test),
-//		cmocka_unit_test(molecule_name_parse_test),
+		cmocka_unit_test(molecule_name_parse_test),
+		cmocka_unit_test(empty_molecule_name_parse_test),
+		cmocka_unit_test(molecule_name_parse_with_small_buffers_test),
 	};
 
 	int res;
