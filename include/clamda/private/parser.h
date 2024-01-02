@@ -70,4 +70,7 @@ clamda_parse_name(struct clamda_parser* p,
 		char* name_buf, size_t name_buf_size,
 		char* descr_buf, size_t descr_buf_size);
 
+int
+clamda_parse_molecular_weight(struct clamda_parser*, float*);
+
 #endif

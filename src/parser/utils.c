@@ -148,3 +148,17 @@ clamda_parse_name(struct clamda_parser* p,
 	return 0;
 }
 
+int
+clamda_parse_molecular_weight(struct clamda_parser* p, float* weight)
+{
+	errno = 0;
+	*weight = strtof(p->line, NULL);
+	if (errno != 0) {
+		const int e = errno;
+		errno = 0;
+		return e;
+	}
+
+	return 0;
+}
+

@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <float.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -234,6 +235,38 @@ molecule_name_parse_with_small_buffers_test(void** state)
 	assert_int_equal(p.pos_col, 6);
 }
 
+void
+molecular_weight_parse_test(void** state)
+{
+	(void)state;
+
+	struct clamda_parser p = {
+		.line = "28.9"
+	};
+
+	float w = 0;
+	int err = clamda_parse_molecular_weight(&p, &w);
+
+	assert_int_equal(err, 0);
+	assert_float_equal(w, 28.9, FLT_EPSILON);
+}
+
+void
+empty_molecular_weight_parse_test(void** state)
+{
+	(void)state;
+
+	struct clamda_parser p = {
+		.line = ""
+	};
+
+	float w = 0;
+	int err = clamda_parse_molecular_weight(&p, &w);
+
+	assert_int_equal(err, EINVAL);
+	assert_float_equal(w, 0.0, FLT_EPSILON);
+}
+
 int main(void)
 {
 	const struct CMUnitTest parser_util_test[] = {
@@ -241,6 +274,8 @@ int main(void)
 		cmocka_unit_test(molecule_name_parse_test),
 		cmocka_unit_test(empty_molecule_name_parse_test),
 		cmocka_unit_test(molecule_name_parse_with_small_buffers_test),
+		cmocka_unit_test(molecular_weight_parse_test),
+		cmocka_unit_test(empty_molecular_weight_parse_test),
 	};
 
 	int res;
