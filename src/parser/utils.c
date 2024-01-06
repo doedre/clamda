@@ -151,8 +151,28 @@ clamda_parse_name(struct clamda_parser* p,
 int
 clamda_parse_molecular_weight(struct clamda_parser* p, float* weight)
 {
+	size_t ib = 0;
+	const size_t bufsiz = 32;
+	char buf[bufsiz];
+	buf[0] = '\0';
+
+	for (int i = 0, c = p->line[i];
+			c != '\n' && c != '\0'; ++i, c = p->line[i]) {
+		p->pos_col = i;
+		if ((c < '0' || c > '9') && (c != '.' && c != ',' && c != ' ')) {
+			if (c == '!') {
+				break;
+			} else {
+				return EINVAL;
+			}
+		}
+		buf[ib] = c;
+		++ib;
+	}
+	buf[ib] = '\0';
+
 	errno = 0;
-	*weight = strtof(p->line, NULL);
+	*weight = strtof(buf, NULL);
 	if (errno != 0) {
 		const int e = errno;
 		errno = 0;
