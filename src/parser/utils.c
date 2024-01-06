@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <inttypes.h>
 #include <errno.h>
 
 #include <clamda/clamda.h>
@@ -108,6 +109,44 @@ clamda_parser_line_type_name(enum clamda_line_type type)
 	}
 }
 
+static int
+clamda_parse_integer(struct clamda_parser* p, int* integer)
+{
+	size_t ib = 0;
+	const size_t bufsiz = 32;
+	char buf[bufsiz];
+	buf[0] = '\0';
+
+	for (int i = 0, c = p->line[i];
+			c != '\n' && c != '\0'; ++i, c = p->line[i]) {
+		p->pos_col = i;
+		if ((c < '0' || c > '9') && (c != '-' && c != ' ')) {
+			if (c == '!') {
+				break;
+			} else {
+				return EINVAL;
+			}
+		}
+		buf[ib] = c;
+		++ib;
+
+		if (ib == bufsiz - 1) {
+			break;
+		}
+	}
+	buf[ib] = '\0';
+
+	errno = 0;
+	*integer = strtol(buf, NULL, 10);
+	if (errno != 0) {
+		const int e = errno;
+		errno = 0;
+		return e;
+	}
+
+	return 0;
+}
+
 int
 clamda_parse_name(struct clamda_parser* p,
 		char* name_buf, size_t name_buf_size,
@@ -168,6 +207,10 @@ clamda_parse_molecular_weight(struct clamda_parser* p, float* weight)
 		}
 		buf[ib] = c;
 		++ib;
+
+		if (ib == bufsiz - 1) {
+			break;
+		}
 	}
 	buf[ib] = '\0';
 
@@ -180,5 +223,11 @@ clamda_parse_molecular_weight(struct clamda_parser* p, float* weight)
 	}
 
 	return 0;
+}
+
+int
+clamda_parse_nlev(struct clamda_parser* p, int* nlev)
+{
+	return clamda_parse_integer(p, nlev);
 }
 

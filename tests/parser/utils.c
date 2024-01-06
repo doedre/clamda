@@ -295,6 +295,66 @@ molecular_weight_with_excess_symbols_parse_test(void** state)
 	assert_float_equal(w, 32.4, FLT_EPSILON);
 }
 
+void
+nlev_parse_test(void** state)
+{
+	(void)state;
+
+	struct clamda_parser p = {
+		.line = " 32 "
+	};
+
+	int nlev = 0;
+	int err = clamda_parse_nlev(&p, &nlev);
+
+	assert_int_equal(err, 0);
+	assert_int_equal(nlev, 32);
+}
+
+void
+empty_nlev_parse_test(void** state)
+{
+	(void)state;
+
+	struct clamda_parser p = {
+		.line = ""
+	};
+
+	int nlev = 0;
+	int err = clamda_parse_nlev(&p, &nlev);
+
+	assert_int_equal(err, EINVAL);
+	assert_int_equal(nlev, 0);
+}
+
+void
+nlev_with_excess_characters_parse_test(void** state)
+{
+	(void)state;
+
+	struct clamda_parser p = {
+		.line = " 32 we"
+	};
+	
+	int nlev = 0;
+	int err = clamda_parse_nlev(&p, &nlev);
+
+	assert_int_equal(err, EINVAL);
+	assert_int_equal(nlev, 0);
+
+	strncpy(p.line, " ! 32", CLAMDA_BUFSIZ - 1);
+	err = clamda_parse_nlev(&p, &nlev);
+
+	assert_int_equal(err, EINVAL);
+	assert_int_equal(nlev, 0);
+
+	strncpy(p.line, " 32 ! additional info", CLAMDA_BUFSIZ - 1);
+	err = clamda_parse_nlev(&p, &nlev);
+
+	assert_int_equal(err, 0);
+	assert_int_equal(nlev, 32);
+}
+
 int main(void)
 {
 	const struct CMUnitTest parser_util_test[] = {
@@ -305,6 +365,9 @@ int main(void)
 		cmocka_unit_test(molecular_weight_parse_test),
 		cmocka_unit_test(empty_molecular_weight_parse_test),
 		cmocka_unit_test(molecular_weight_with_excess_symbols_parse_test),
+		cmocka_unit_test(nlev_parse_test),
+		cmocka_unit_test(empty_nlev_parse_test),
+		cmocka_unit_test(nlev_with_excess_characters_parse_test),
 	};
 
 	int res;

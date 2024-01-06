@@ -73,4 +73,7 @@ clamda_parse_name(struct clamda_parser* p,
 int
 clamda_parse_molecular_weight(struct clamda_parser*, float*);
 
+int
+clamda_parse_nlev(struct clamda_parser*, int*);
+
 #endif
